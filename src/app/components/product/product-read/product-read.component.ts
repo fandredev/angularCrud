@@ -10,6 +10,7 @@ import { ProductService } from '../product.service';
 export class ProductReadComponent implements OnInit {
   products: Product[];
   product: Product;
+
   constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
@@ -19,16 +20,21 @@ export class ProductReadComponent implements OnInit {
   retrieveData(): void {
     this.productService.readDatabase()
       .subscribe(
-        data => {
-          this.products = data;
-          console.log("##GET##");
-          console.log(data);
-        },
-        error => {
-          console.log("###ERROR##" + error);
-        }
+        data => this.products = data,
+        error => console.log("###ERROR##" + error)
       );
   }
 
-
+  deleteProduct($event: PointerEvent | MouseEvent, id: number) {
+    if ($event.type === 'click') {
+      if (id) {
+        this.productService.deleteItem(id).subscribe(data => {
+          if (data) {
+            alert('Produto deletado com sucesso')
+            this.productService.readDatabase()
+          }
+        })
+      }
+    }
+  }
 }
